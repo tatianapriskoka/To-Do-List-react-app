@@ -1,5 +1,6 @@
 import React, { ChangeEvent, KeyboardEvent, useState } from "react";
 import { FilterValueType } from "./App";
+import AddItemForm from "./AddItemForm";
 
 
 export type TaskType = {
@@ -22,31 +23,7 @@ type PropsType = {
 }
 
 function Todolist(props: PropsType) {
-    let [newTaskTitle, setNewTaskTitle] = useState('');
 
-    let [error, setError] = useState<string | null>(null);
-
-    const onNewTitleChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-        setNewTaskTitle(e.currentTarget.value);
-    }
-
-    const onKeyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-        setError(null);
-        if (e.charCode === 13) {
-            props.addTask(newTaskTitle, props.id);
-            setNewTaskTitle('');
-        }
-    }
-
-    const addTask = () => {
-        if (newTaskTitle.trim() !== '') {
-            return props.addTask(newTaskTitle.trim(), props.id);
-            setNewTaskTitle('');
-        } else {
-            setError('Field required')
-        }
-
-    }
 
     const onAllClickFilter = () => { props.changeFilter('all', props.id) };
     const onActiveClickFilter = () => { props.changeFilter('active', props.id) };
@@ -55,19 +32,14 @@ function Todolist(props: PropsType) {
         props.removeTodoList(props.id)
     };
 
+
+    const addTask = (title: string) => {
+        props.addTask(title, props.id)
+    }
     return (
         <div>
             <h3>{props.title} <button onClick={removeTodoList}>X</button></h3>
-            <div>
-                <input value={newTaskTitle}
-                    onChange={onNewTitleChangeHandler}
-                    onKeyPress={onKeyPressHandler}
-                    className={error ? "error" : ''}
-                />
-                <button onClick={addTask}>+</button>
-
-                {error && <div className="error-message">{error}</div>}
-            </div>
+            <AddItemForm addItem={addTask} />
             <ul>
                 {
                     props.tasks.map((task) => {
@@ -100,5 +72,7 @@ function Todolist(props: PropsType) {
     )
 
 }
+
+
 
 export default Todolist;
